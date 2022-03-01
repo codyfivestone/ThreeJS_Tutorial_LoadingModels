@@ -1,9 +1,8 @@
-import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.118/build/three.module.js';
+import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.118/build/three.module.js";
 
-import {FBXLoader} from 'https://cdn.jsdelivr.net/npm/three@0.118.1/examples/jsm/loaders/FBXLoader.js';
-import {GLTFLoader} from 'https://cdn.jsdelivr.net/npm/three@0.118.1/examples/jsm/loaders/GLTFLoader.js';
-import {OrbitControls} from 'https://cdn.jsdelivr.net/npm/three@0.118/examples/jsm/controls/OrbitControls.js';
-
+import { FBXLoader } from "https://cdn.jsdelivr.net/npm/three@0.118.1/examples/jsm/loaders/FBXLoader.js";
+import { GLTFLoader } from "https://cdn.jsdelivr.net/npm/three@0.118.1/examples/jsm/loaders/GLTFLoader.js";
+import { OrbitControls } from "https://cdn.jsdelivr.net/npm/three@0.118/examples/jsm/controls/OrbitControls.js";
 
 class BasicCharacterControls {
   constructor(params) {
@@ -18,12 +17,12 @@ class BasicCharacterControls {
       left: false,
       right: false,
     };
-    this._decceleration = new THREE.Vector3(-0.0005, -0.0001, -5.0);
-    this._acceleration = new THREE.Vector3(1, 0.25, 50.0);
+    this._decceleration = new THREE.Vector3(-0.0005, -0.0001, -2.0);
+    this._acceleration = new THREE.Vector3(10, 1.25, 300.0);
     this._velocity = new THREE.Vector3(0, 0, 0);
 
-    document.addEventListener('keydown', (e) => this._onKeyDown(e), false);
-    document.addEventListener('keyup', (e) => this._onKeyUp(e), false);
+    document.addEventListener("keydown", (e) => this._onKeyDown(e), false);
+    document.addEventListener("keyup", (e) => this._onKeyUp(e), false);
   }
 
   _onKeyDown(event) {
@@ -49,7 +48,7 @@ class BasicCharacterControls {
   }
 
   _onKeyUp(event) {
-    switch(event.keyCode) {
+    switch (event.keyCode) {
       case 87: // w
         this._move.forward = false;
         break;
@@ -73,13 +72,14 @@ class BasicCharacterControls {
   Update(timeInSeconds) {
     const velocity = this._velocity;
     const frameDecceleration = new THREE.Vector3(
-        velocity.x * this._decceleration.x,
-        velocity.y * this._decceleration.y,
-        velocity.z * this._decceleration.z
+      velocity.x * this._decceleration.x,
+      velocity.y * this._decceleration.y,
+      velocity.z * this._decceleration.z
     );
     frameDecceleration.multiplyScalar(timeInSeconds);
-    frameDecceleration.z = Math.sign(frameDecceleration.z) * Math.min(
-        Math.abs(frameDecceleration.z), Math.abs(velocity.z));
+    frameDecceleration.z =
+      Math.sign(frameDecceleration.z) *
+      Math.min(Math.abs(frameDecceleration.z), Math.abs(velocity.z));
 
     velocity.add(frameDecceleration);
 
@@ -94,6 +94,7 @@ class BasicCharacterControls {
     if (this._move.backward) {
       velocity.z -= this._acceleration.z * timeInSeconds;
     }
+    // velocity.z += 200 * timeInSeconds;
     if (this._move.left) {
       _A.set(0, 1, 0);
       _Q.setFromAxisAngle(_A, Math.PI * timeInSeconds * this._acceleration.y);
@@ -128,7 +129,6 @@ class BasicCharacterControls {
   }
 }
 
-
 class LoadModelDemo {
   constructor() {
     this._Initialize();
@@ -145,9 +145,13 @@ class LoadModelDemo {
 
     document.body.appendChild(this._threejs.domElement);
 
-    window.addEventListener('resize', () => {
-      this._OnWindowResize();
-    }, false);
+    window.addEventListener(
+      "resize",
+      () => {
+        this._OnWindowResize();
+      },
+      false
+    );
 
     const fov = 60;
     const aspect = 1920 / 1080;
@@ -158,7 +162,7 @@ class LoadModelDemo {
 
     this._scene = new THREE.Scene();
 
-    let light = new THREE.DirectionalLight(0xFFFFFF, 1.0);
+    let light = new THREE.DirectionalLight(0xffffff, 1.0);
     light.position.set(20, 100, 10);
     light.target.position.set(0, 0, 0);
     light.castShadow = true;
@@ -175,30 +179,30 @@ class LoadModelDemo {
     light.shadow.camera.bottom = -100;
     this._scene.add(light);
 
-    light = new THREE.AmbientLight(0xFFFFFF, 4.0);
+    light = new THREE.AmbientLight(0xffffff, 4.0);
     this._scene.add(light);
 
-    const controls = new OrbitControls(
-      this._camera, this._threejs.domElement);
+    const controls = new OrbitControls(this._camera, this._threejs.domElement);
     controls.target.set(0, 20, 0);
     controls.update();
 
     const loader = new THREE.CubeTextureLoader();
     const texture = loader.load([
-        './resources/posx.jpg',
-        './resources/negx.jpg',
-        './resources/posy.jpg',
-        './resources/negy.jpg',
-        './resources/posz.jpg',
-        './resources/negz.jpg',
+      "./resources/posx.jpg",
+      "./resources/negx.jpg",
+      "./resources/posy.jpg",
+      "./resources/negy.jpg",
+      "./resources/posz.jpg",
+      "./resources/negz.jpg",
     ]);
     this._scene.background = texture;
 
     const plane = new THREE.Mesh(
-        new THREE.PlaneGeometry(100, 100, 10, 10),
-        new THREE.MeshStandardMaterial({
-            color: 0x202020,
-          }));
+      new THREE.PlaneGeometry(100, 100, 10, 10),
+      new THREE.MeshStandardMaterial({
+        color: 0x202020,
+      })
+    );
     plane.castShadow = false;
     plane.receiveShadow = true;
     plane.rotation.x = -Math.PI / 2;
@@ -219,22 +223,22 @@ class LoadModelDemo {
 
   _LoadAnimatedModel() {
     const loader = new FBXLoader();
-    loader.setPath('./resources/zombie/');
-    loader.load('mremireh_o_desbiens.fbx', (fbx) => {
+    loader.setPath("./resources/zombie/");
+    loader.load("mremireh_o_desbiens.fbx", (fbx) => {
       fbx.scale.setScalar(0.1);
-      fbx.traverse(c => {
+      fbx.traverse((c) => {
         c.castShadow = true;
       });
 
       const params = {
         target: fbx,
         camera: this._camera,
-      }
+      };
       this._controls = new BasicCharacterControls(params);
 
       const anim = new FBXLoader();
-      anim.setPath('./resources/zombie/');
-      anim.load('walk.fbx', (anim) => {
+      anim.setPath("./resources/zombie/");
+      anim.load("walk.fbx", (anim) => {
         const m = new THREE.AnimationMixer(fbx);
         this._mixers.push(m);
         const idle = m.clipAction(anim.animations[0]);
@@ -249,7 +253,7 @@ class LoadModelDemo {
     loader.setPath(path);
     loader.load(modelFile, (fbx) => {
       fbx.scale.setScalar(0.1);
-      fbx.traverse(c => {
+      fbx.traverse((c) => {
         c.castShadow = true;
       });
       fbx.position.copy(offset);
@@ -268,8 +272,8 @@ class LoadModelDemo {
 
   _LoadModel() {
     const loader = new GLTFLoader();
-    loader.load('./resources/thing.glb', (gltf) => {
-      gltf.scene.traverse(c => {
+    loader.load("./resources/thing.glb", (gltf) => {
+      gltf.scene.traverse((c) => {
         c.castShadow = true;
       });
       this._scene.add(gltf.scene);
@@ -299,7 +303,7 @@ class LoadModelDemo {
   _Step(timeElapsed) {
     const timeElapsedS = timeElapsed * 0.001;
     if (this._mixers) {
-      this._mixers.map(m => m.update(timeElapsedS));
+      this._mixers.map((m) => m.update(timeElapsedS));
     }
 
     if (this._controls) {
@@ -308,9 +312,8 @@ class LoadModelDemo {
   }
 }
 
-
 let _APP = null;
 
-window.addEventListener('DOMContentLoaded', () => {
+window.addEventListener("DOMContentLoaded", () => {
   _APP = new LoadModelDemo();
 });
